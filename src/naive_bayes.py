@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import math
 from typing import Dict
-
+import operator
 
 def calculate_probability(x: float, mean: float, stdev: float) -> float:
     exponent = math.exp(-(math.pow(x-mean, 2)/(2*math.pow(stdev, 2))))
@@ -60,3 +60,9 @@ def calculate_class_prob(df: pd.DataFrame, sample: pd.Series,
         probabilities[index] = index_prob
 
     return probabilities
+
+
+def predict(df: pd.DataFrame, sample: pd.Series, class_col: str) -> any:
+    probabilities = calculate_class_prob(df, sample, class_col)
+    return max(probabilities.items(), key=operator.itemgetter(1))[0]
+
