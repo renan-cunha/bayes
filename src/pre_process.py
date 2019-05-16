@@ -24,14 +24,23 @@ def summary_csv(df: pd.DataFrame, class_col: str) -> pd.DataFrame:
     the columns represents the mean and std of the attributes"""
     labels = set(df[class_col])
     for label in labels:
-        df_label = select_by_label(df, label, class_col)
-        df_label.mean
-
+        df_label_summary = summary_csv_label(df, class_col, label)
+        print("ok")
+        df_label_summary = df_label_summary.rename(label)
+        if "result_csv" in locals():
+            result_csv = result_csv.append(df_label_summary)
+        else:
+            result_csv = pd.DataFrame([df_label_summary])
+    return result_csv
 
 
 def select_by_label(df: pd.DataFrame, label: any,
-                    column: str) -> pd.DataFrame:
+                    column: str, drop_column: bool = True) -> pd.DataFrame:
     index = df[column] == label
-    return df[index]
+    result = df[index]
+    if drop_column:
+        print(result.columns)
+        result = result.drop(columns=[column])
+    return result
 
 
