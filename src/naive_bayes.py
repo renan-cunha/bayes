@@ -25,7 +25,6 @@ def summary_csv(df: pd.DataFrame, class_col: str) -> pd.DataFrame:
     labels = set(df[class_col])
     for label in labels:
         df_label_summary = summary_csv_label(df, class_col, label)
-        print("ok")
         df_label_summary = df_label_summary.rename(label)
         if "result_csv" in locals():
             result_csv = result_csv.append(df_label_summary)
@@ -39,8 +38,25 @@ def select_by_label(df: pd.DataFrame, label: any,
     index = df[column] == label
     result = df[index]
     if drop_column:
-        print(result.columns)
         result = result.drop(columns=[column])
     return result
 
 
+def calculate_class_prob(df: pd.DataFrame, sample: pd.Series,
+                         class_col: str) -> Dict:
+    probabilities = {}
+
+    df_summary = summary_csv(df, class_col)
+
+    df = df.drop(columns=[class_col])
+    for index in df_summary.index:
+        index_prob = 1.0
+        for col in df.columns:
+            index_prob *= calculate_probability(sample[col],
+                                                df_summary.loc[index,
+                                                               f"{col}_mean"],
+                                                df_summary.loc[index,
+                                                               f"{col}_std"])
+        probabilities[index] = index_prob
+
+    return probabilities
