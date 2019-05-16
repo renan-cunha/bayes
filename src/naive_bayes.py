@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import math
-from typing import Dict
+from typing import Dict, List
 import operator
 
 def calculate_probability(x: float, mean: float, stdev: float) -> float:
@@ -66,3 +66,10 @@ def predict(df: pd.DataFrame, sample: pd.Series, class_col: str) -> any:
     probabilities = calculate_class_prob(df, sample, class_col)
     return max(probabilities.items(), key=operator.itemgetter(1))[0]
 
+
+def predictions(df: pd.DataFrame, samples: List[pd.Series], class_col: str) -> List:
+    results: List = []
+    for sample in samples:
+        result: any = predict(df, sample, class_col)
+        results.append(result)
+    return results
